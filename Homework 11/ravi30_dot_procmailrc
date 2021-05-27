@@ -1,0 +1,53 @@
+# Homework Number: 11
+# Name: Nikita Ravi
+# ECN Login: ravi30
+# Due Date: 04/27/2021
+
+
+SHELL=/bin/sh
+PATH=/usr/local/lib/mh:$PATH
+MAILDIR=$HOME/Mail
+LOGFILE=$HOME/Mail/logfile
+SENDMAIL=/usr/sbin/sendmail
+#VERBOSE=1
+VERBOSE=0
+EOL="
+"
+LOG="$EOL$EOL$EOL"
+LOG="New message log:$EOL"
+LOG=`perl GET_MESSAGE_INDEX`
+LOG="$EOL"
+
+
+
+## Recipe_1:
+## Trap emails with multiple entries in From, check if a , is present
+:0 :
+* ^From.*,
+spamFolder
+
+
+## Recipe_2:
+## Trap email with certain keywords in the subject like Diploma, Medications, Career, etc.
+:0 : 
+* ^Subject.*(.*[Dd]iploma.*| .*[Mm]edication.* | .*[Cc]areer.* | .*imphotgence.* | .*potteency.* | .*[Cc]ertificate.* | .*[Cc]ollege.* | .*Hostway.*|.*[Ss]afe.* | .*[Mm]edication.* |.*[Bb]rand.*)
+spamFolder
+
+
+
+## Recipe_3:
+## If the body has information on Casino or money ($, EUR) then trap the email
+:0 B
+* ([Cc]asino | CASINO | \$[\.0-9,]+| [\.0-9,]+EUR)
+spamFolder
+
+
+
+## Recipe_4:
+## Delete emails with different formats like html, plain, and multipart 
+:0 HB:
+* ^Content-Type: text/html
+* ^Content-Type: text/plain
+* ^Content-Type: multipart/alternative
+spamFolder
+
